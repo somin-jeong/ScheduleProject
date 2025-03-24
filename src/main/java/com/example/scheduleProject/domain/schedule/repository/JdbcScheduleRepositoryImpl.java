@@ -25,13 +25,13 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("schedule")
                 .usingGeneratedKeyColumns("schedule_id")
-                .usingColumns("title", "content", "password", "authorName", "user_id");
+                .usingColumns("title", "content", "password", "author_name", "user_id");
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", schedule.getTitle());
         parameters.put("content", schedule.getContent());
         parameters.put("password", schedule.getPassword());
-        parameters.put("authorName", schedule.getAuthorName());
+        parameters.put("author_name", schedule.getAuthorName());
         parameters.put("user_id", schedule.getUserId());
 
         Number number = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
@@ -41,11 +41,11 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public List<ScheduleResponseDto> findAllSchedules(String updatedDate, String authorName) {
-        String sql = "SELECT s.schedule_id, s.title, s.content, s.password, u.name " +
-                "FROM schedule s JOIN users u ON s.user_id = u.user_id " +
-                "WHERE (? IS NULL OR DATE(s.updated_at) = ?) " +
-                "AND (? IS NULL OR u.name = ?) " +
-                "ORDER BY s.updated_at DESC";
+        String sql = "SELECT schedule_id, title, content, author_name, password " +
+                "FROM schedule " +
+                "WHERE (? IS NULL OR DATE(updated_at) = ?) " +
+                "AND (? IS NULL OR author_name = ?) " +
+                "ORDER BY updated_at DESC";
 
         PreparedStatementSetter preparedStatementSetter = ps -> {
             ps.setString(1, updatedDate);
@@ -62,8 +62,8 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
                 rs.getLong("schedule_id"),
                 rs.getString("title"),
                 rs.getString("content"),
-                rs.getString("password"),
-                rs.getString("name")
+                rs.getString("author_name"),
+                rs.getString("password")
         );
     }
 
@@ -89,7 +89,7 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public boolean updateSchedule(Long scheduleId, String content, String title, String authorName, String password) {
-        String sql = "UPDATE schedule SET title = ?, content = ?, authorName = ?" +
+        String sql = "UPDATE schedule SET title = ?, content = ?, author_name = ?" +
                 "WHERE schedule_id = ? AND password = ?";
 
         PreparedStatementSetter preparedStatementSetter = ps -> {

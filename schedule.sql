@@ -11,7 +11,7 @@ CREATE TABLE `Schedule` (
      `title` VARCHAR(100) NOT NULL,
      `content` VARCHAR(500) NOT NULL,
      `password` VARCHAR(100) NOT NULL,
-     `authorName` VARCHAR(100) NOT NULL,
+     `author_name` VARCHAR(100) NOT NULL,
      `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
      `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      `user_id` BIGINT NOT NULL,
