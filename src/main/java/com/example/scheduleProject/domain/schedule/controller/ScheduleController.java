@@ -2,6 +2,7 @@ package com.example.scheduleProject.domain.schedule.controller;
 
 import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
+import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.service.ScheduleService;
@@ -32,6 +33,12 @@ public class ScheduleController {
     @GetMapping("/schedules/{scheduleId}")
     private ResponseEntity<ScheduleResponseDto> findSchedule(@PathVariable Long scheduleId) {
         ScheduleResponseDto schedule = scheduleService.findSchedule(scheduleId);
+        return new ResponseEntity<>(schedule, HttpStatusCode.valueOf(200));
+    }
+
+    @PutMapping("/schedules/{scheduleId}")
+    private ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable Long scheduleId, @RequestBody UpdateScheduleRequestDto requestDto) {
+        ScheduleResponseDto schedule = scheduleService.updateSchedule(scheduleId, requestDto);
         return new ResponseEntity<>(schedule, HttpStatusCode.valueOf(200));
     }
 

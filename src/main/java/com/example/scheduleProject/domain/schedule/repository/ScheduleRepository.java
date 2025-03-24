@@ -5,10 +5,12 @@ import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponse
 import com.example.scheduleProject.domain.schedule.entity.Schedule;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ScheduleRepository {
     SaveScheduleResponseDto saveSchedule(Schedule schedule);
     List<ScheduleResponseDto> findAllSchedules(String updatedDate, String authorName);
     ScheduleResponseDto findSchedule(Long scheduleId);
+    boolean checkPasswordMatch(Long scheduleId, String password);
+    boolean updateSchedule(Long scheduleId, String content, String title, String authorName, String password);
+
 }

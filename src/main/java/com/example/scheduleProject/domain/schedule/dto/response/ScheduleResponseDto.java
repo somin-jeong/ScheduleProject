@@ -6,6 +6,6 @@ public record ScheduleResponseDto(
         @NotNull Long scheduleId,
         @NotNull String title,
         @NotNull String content,
-        @NotNull String password,
-        @NotNull String authorName
+        @NotNull String authorName,
+        @NotNull String password
 ) {}

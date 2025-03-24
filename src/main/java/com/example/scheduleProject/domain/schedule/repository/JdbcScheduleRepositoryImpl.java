@@ -74,4 +74,32 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
         return jdbcTemplate.queryForObject(sql, schedulesRowMapper(), scheduleId);
     }
+
+    @Override
+    public boolean checkPasswordMatch(Long scheduleId, String password) {
+        String sql = "SELECT COUNT(*) " +
+                "FROM schedule s " +
+                "WHERE s.schedule_id = ? AND s.password = ?";
+
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, scheduleId, password);
+
+        return count != 0;
+    }
+
+    @Override
+    public boolean updateSchedule(Long scheduleId, String content, String title, String authorName, String password) {
+        String sql = "UPDATE schedule SET title = ?, content = ?, authorName = ?" +
+                "WHERE schedule_id = ? AND password = ?";
+
+        PreparedStatementSetter preparedStatementSetter = ps -> {
+            ps.setString(1, title);
+            ps.setString(2, content);
+            ps.setString(3, authorName);
+            ps.setLong(4, scheduleId);
+            ps.setString(5, password);
+        };
+
+        int updated = jdbcTemplate.update(sql, preparedStatementSetter);
+        return updated > 0;
+    }
 }

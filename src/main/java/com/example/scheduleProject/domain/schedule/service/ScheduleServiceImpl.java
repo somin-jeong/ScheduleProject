@@ -2,6 +2,7 @@ package com.example.scheduleProject.domain.schedule.service;
 
 import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
+import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.entity.Schedule;
@@ -35,5 +36,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleResponseDto findSchedule(Long scheduleId) {
         return scheduleRepository.findSchedule(scheduleId);
+    }
+
+    @Override
+    public ScheduleResponseDto updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto) {
+        if (!scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        boolean isUpdated = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.authorName(), requestDto.password());
+        if (isUpdated) {
+            return new ScheduleResponseDto(scheduleId, requestDto.title(), requestDto.content(), requestDto.authorName(), requestDto.password());
+        }
+        return null;
     }
 }
