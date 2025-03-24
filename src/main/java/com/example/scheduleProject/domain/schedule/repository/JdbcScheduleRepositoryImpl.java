@@ -40,18 +40,18 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules(String updatedDate, String authorName) {
+    public List<ScheduleResponseDto> findAllSchedules(String updatedDate, Long userId) {
         String sql = "SELECT schedule_id, title, content, author_name, password " +
                 "FROM schedule " +
                 "WHERE (? IS NULL OR DATE(updated_at) = ?) " +
-                "AND (? IS NULL OR author_name = ?) " +
+                "AND (? IS NULL OR user_id = ?) " +
                 "ORDER BY updated_at DESC";
 
         PreparedStatementSetter preparedStatementSetter = ps -> {
             ps.setString(1, updatedDate);
             ps.setString(2, updatedDate);
-            ps.setString(3, authorName);
-            ps.setString(4, authorName);
+            ps.setLong(3, userId);
+            ps.setLong(4, userId);
         };
 
         return jdbcTemplate.query(sql, preparedStatementSetter, schedulesRowMapper());
