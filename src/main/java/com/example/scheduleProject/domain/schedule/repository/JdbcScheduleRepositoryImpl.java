@@ -69,9 +69,9 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public ScheduleResponseDto findSchedule(Long scheduleId) {
-        String sql = "SELECT s.schedule_id, s.title, s.content, s.password, u.name " +
-                "FROM schedule s JOIN users u ON s.user_id = u.user_id " +
-                "WHERE s.schedule_id = ?";
+        String sql = "SELECT schedule_id, title, content, author_name, password " +
+                "FROM schedule " +
+                "WHERE schedule_id = ?";
 
         return jdbcTemplate.queryForObject(sql, schedulesRowMapper(), scheduleId);
     }
