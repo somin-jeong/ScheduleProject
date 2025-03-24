@@ -40,7 +40,8 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public List<ScheduleResponseDto> findAllSchedules(String updatedDate, String authorName) {
-        String sql = "SELECT s.schedule_id, s.title, s.content, s.password, u.name FROM schedule s JOIN users u ON s.user_id = u.user_id " +
+        String sql = "SELECT s.schedule_id, s.title, s.content, s.password, u.name " +
+                "FROM schedule s JOIN users u ON s.user_id = u.user_id " +
                 "WHERE (? IS NULL OR DATE(s.updated_at) = ?) " +
                 "AND (? IS NULL OR u.name = ?) " +
                 "ORDER BY s.updated_at DESC";
@@ -63,5 +64,14 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
                 rs.getString("password"),
                 rs.getString("name")
         );
+    }
+
+    @Override
+    public ScheduleResponseDto findSchedule(Long scheduleId) {
+        String sql = "SELECT s.schedule_id, s.title, s.content, s.password, u.name " +
+                "FROM schedule s JOIN users u ON s.user_id = u.user_id " +
+                "WHERE s.schedule_id = ?";
+
+        return jdbcTemplate.queryForObject(sql, schedulesRowMapper(), scheduleId);
     }
 }

@@ -31,4 +31,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto) {
         return scheduleRepository.findAllSchedules(requestDto.updatedDate(), requestDto.authorName());
     }
+
+    @Override
+    public ScheduleResponseDto findSchedule(Long scheduleId) {
+        return scheduleRepository.findSchedule(scheduleId);
+    }
 }
