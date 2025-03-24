@@ -1,5 +1,6 @@
 package com.example.scheduleProject.domain.schedule.controller;
 
+import com.example.scheduleProject.domain.schedule.dto.request.DeleteScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
@@ -42,4 +43,9 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatusCode.valueOf(200));
     }
 
+    @DeleteMapping("/schedules/{scheduleId}")
+    private ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId, @RequestBody DeleteScheduleRequestDto requestDto) {
+        scheduleService.deleteSchedule(scheduleId, requestDto);
+        return new ResponseEntity<>("삭제 완료", HttpStatusCode.valueOf(200));
+    }
 }

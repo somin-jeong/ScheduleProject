@@ -103,4 +103,11 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
         int updated = jdbcTemplate.update(sql, preparedStatementSetter);
         return updated > 0;
     }
+
+    @Override
+    public void deleteSchedule(Long scheduleId, String password) {
+        String sql = "DELETE FROM schedule WHERE schedule_id = ? AND password = ?";
+
+        jdbcTemplate.update(sql, scheduleId, password);
+    }
 }

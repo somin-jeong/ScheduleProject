@@ -1,5 +1,6 @@
 package com.example.scheduleProject.domain.schedule.service;
 
+import com.example.scheduleProject.domain.schedule.dto.request.DeleteScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
@@ -50,5 +51,14 @@ public class ScheduleServiceImpl implements ScheduleService {
             return new ScheduleResponseDto(scheduleId, requestDto.title(), requestDto.content(), requestDto.authorName(), requestDto.password());
         }
         return null;
+    }
+
+    @Override
+    public void deleteSchedule(Long scheduleId, DeleteScheduleRequestDto requestDto) {
+        if (!scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        scheduleRepository.deleteSchedule(scheduleId, requestDto.password());
     }
 }
