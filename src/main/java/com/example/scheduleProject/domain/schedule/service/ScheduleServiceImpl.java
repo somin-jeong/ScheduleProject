@@ -23,6 +23,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .title(requestDto.title())
                 .content(requestDto.content())
                 .password(requestDto.password())
+                .authorName(requestDto.authorName())
                 .userId(requestDto.userId()).build();
 
         return scheduleRepository.saveSchedule(schedule);

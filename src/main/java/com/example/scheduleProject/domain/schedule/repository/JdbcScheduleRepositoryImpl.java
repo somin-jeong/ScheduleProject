@@ -25,12 +25,13 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("schedule")
                 .usingGeneratedKeyColumns("schedule_id")
-                .usingColumns("title", "content", "password", "user_id");
+                .usingColumns("title", "content", "password", "authorName", "user_id");
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", schedule.getTitle());
         parameters.put("content", schedule.getContent());
         parameters.put("password", schedule.getPassword());
+        parameters.put("authorName", schedule.getAuthorName());
         parameters.put("user_id", schedule.getUserId());
 
         Number number = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));

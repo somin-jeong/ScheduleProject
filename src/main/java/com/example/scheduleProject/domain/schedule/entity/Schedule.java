@@ -11,15 +11,17 @@ public class Schedule {
     private String title;
     private String content;
     private String password;
+    private String authorName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long userId;
 
     @Builder
-    public Schedule(String title, String content, String password, Long userId) {
+    public Schedule(String title, String content, String password, String authorName, Long userId) {
         this.title = title;
         this.content = content;
         this.password = password;
+        this.authorName = authorName;
         this.userId = userId;
     }
 }

@@ -6,5 +6,6 @@ public record SaveScheduleRequestDto(
         @NotNull Long userId,
         @NotNull String title,
         @NotNull String content,
+        @NotNull String authorName,
         @NotNull String password
 ) {}
