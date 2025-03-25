@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -16,6 +17,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -76,12 +78,28 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public ScheduleResponseDto findSchedule(Long scheduleId) {
+    public Optional<ScheduleResponseDto> findSchedule(Long scheduleId) {
         String sql = "SELECT schedule_id, title, content, author_name, password " +
                 "FROM schedule " +
                 "WHERE schedule_id = ?";
 
-        return jdbcTemplate.queryForObject(sql, schedulesRowMapper(), scheduleId);
+        return jdbcTemplate.query(sql, getOptionalResultSetExtractor(), scheduleId);
+    }
+
+    private static ResultSetExtractor<Optional<ScheduleResponseDto>> getOptionalResultSetExtractor() {
+        return rs -> {
+            if (rs.next()) {
+                return Optional.of(new ScheduleResponseDto(
+                        rs.getLong("schedule_id"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("author_name"),
+                        rs.getString("password")
+                ));
+            } else {
+                return Optional.empty();
+            }
+        };
     }
 
     @Override

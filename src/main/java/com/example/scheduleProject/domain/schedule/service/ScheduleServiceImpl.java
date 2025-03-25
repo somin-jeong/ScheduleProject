@@ -9,12 +9,14 @@ import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponse
 import com.example.scheduleProject.domain.schedule.entity.Schedule;
 import com.example.scheduleProject.domain.schedule.repository.ScheduleRepository;
 import com.example.scheduleProject.domain.user.repository.UserRepository;
+import com.example.scheduleProject.global.exception.ScheduleException;
 import com.example.scheduleProject.global.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.example.scheduleProject.global.response.status.BaseResponseStatus.NOT_EXIST_SCHEDULE_ERROR;
 import static com.example.scheduleProject.global.response.status.BaseResponseStatus.NOT_EXIST_USER_ERROR;
 
 @Service
@@ -50,7 +52,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResponseDto findSchedule(Long scheduleId) {
-        return scheduleRepository.findSchedule(scheduleId);
+        return scheduleRepository.findSchedule(scheduleId)
+                .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
     }
 
     @Override

@@ -13,7 +13,12 @@ public enum BaseResponseStatus implements ResponseStatus {
     /**
      * 3000: 사용자 정보 오류
      */
-    NOT_EXIST_USER_ERROR(3001, HttpStatus.OK.value(), "존재하지 않는 사용자입니다.");
+    NOT_EXIST_USER_ERROR(3001, HttpStatus.OK.value(), "존재하지 않는 사용자입니다."),
+
+    /**
+     * 4000: 일정 정보 오류
+     */
+    NOT_EXIST_SCHEDULE_ERROR(4001, HttpStatus.OK.value(), "일정이 존재하지 않습니다.");
 
     private final int code;
     private final int status;
