@@ -1,8 +1,8 @@
 package com.example.scheduleProject.domain.schedule.service;
 
 import com.example.scheduleProject.domain.schedule.dto.request.DeleteScheduleRequestDto;
-import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
+import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
@@ -25,9 +25,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public SaveScheduleResponseDto saveSchedule(SaveScheduleRequestDto requestDto) {
-        if (!userRepository.existsByUserId(requestDto.userId())) {
-            throw new UserException(NOT_EXIST_USER_ERROR);
-        }
+        userRepository.findByUserId(requestDto.userId())
+                .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
 
         Schedule schedule = Schedule.builder()
                 .title(requestDto.title())
@@ -41,6 +40,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto) {
+        if (requestDto.userId() != null) {
+            userRepository.findByUserId(requestDto.userId())
+                    .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
+        }
+
         return scheduleRepository.findAllSchedules(requestDto.updatedDate(), requestDto.userId());
     }
 

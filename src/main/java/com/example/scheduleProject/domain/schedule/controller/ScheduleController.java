@@ -27,7 +27,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedules")
-    private ResponseEntity<List<ScheduleResponseDto>> findAllSchedules(@ModelAttribute FindScheduleRequestDto requestDto) {
+    private ResponseEntity<List<ScheduleResponseDto>> findAllSchedules(@ModelAttribute @Valid FindScheduleRequestDto requestDto) {
         List<ScheduleResponseDto> schedules = scheduleService.findAllSchedules(requestDto);
         return new ResponseEntity<>(schedules, HttpStatusCode.valueOf(200));
     }

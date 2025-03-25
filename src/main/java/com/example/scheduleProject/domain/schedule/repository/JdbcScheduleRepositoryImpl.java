@@ -4,6 +4,7 @@ import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResp
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.entity.Schedule;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,10 +12,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
@@ -50,8 +53,13 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
         PreparedStatementSetter preparedStatementSetter = ps -> {
             ps.setString(1, updatedDate);
             ps.setString(2, updatedDate);
-            ps.setLong(3, userId);
-            ps.setLong(4, userId);
+            if (userId != null) {
+                ps.setLong(3, userId);
+                ps.setLong(4, userId);
+            } else {
+                ps.setNull(3, Types.BIGINT);
+                ps.setNull(4, Types.BIGINT);
+            }
         };
 
         return jdbcTemplate.query(sql, preparedStatementSetter, schedulesRowMapper());
