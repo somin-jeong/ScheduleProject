@@ -103,14 +103,12 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public boolean checkPasswordMatch(Long scheduleId, String password) {
-        String sql = "SELECT COUNT(*) " +
+    public Optional<ScheduleResponseDto> checkPasswordMatch(Long scheduleId, String password) {
+        String sql = "SELECT * " +
                 "FROM schedule s " +
                 "WHERE s.schedule_id = ? AND s.password = ?";
 
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, scheduleId, password);
-
-        return count != 0;
+        return jdbcTemplate.query(sql, getOptionalResultSetExtractor(), scheduleId, password);
     }
 
     @Override

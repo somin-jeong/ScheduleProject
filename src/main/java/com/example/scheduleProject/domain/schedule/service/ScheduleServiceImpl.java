@@ -17,8 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.example.scheduleProject.global.response.status.BaseResponseStatus.NOT_EXIST_SCHEDULE_ERROR;
-import static com.example.scheduleProject.global.response.status.BaseResponseStatus.NOT_EXIST_USER_ERROR;
+import static com.example.scheduleProject.global.response.status.BaseResponseStatus.*;
 
 @Slf4j
 @Service
@@ -60,9 +59,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResponseDto updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto) {
-        if (!scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+        scheduleRepository.findSchedule(scheduleId)
+                .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
+        scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())
+                .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
 
         boolean isUpdated = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.authorName(), requestDto.password());
         if (isUpdated) {
@@ -73,9 +73,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public void deleteSchedule(Long scheduleId, DeleteScheduleRequestDto requestDto) {
-        if (!scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+        scheduleRepository.findSchedule(scheduleId)
+                .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
+        scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())
+                .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
 
         scheduleRepository.deleteSchedule(scheduleId, requestDto.password());
     }
