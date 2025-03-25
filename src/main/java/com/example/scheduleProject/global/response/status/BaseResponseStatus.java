@@ -11,6 +11,11 @@ public enum BaseResponseStatus implements ResponseStatus {
     SUCCESS(1000, HttpStatus.OK.value(), "요청에 성공하였습니다."),
 
     /**
+     * 2000: 요청 실패
+     */
+    ARGUMENT_TYPE_MISMATCH(2001, HttpStatus.OK.value(), "잘못된 파라미터 타입입니다."),
+
+    /**
      * 3000: 사용자 정보 오류
      */
     NOT_EXIST_USER_ERROR(3001, HttpStatus.OK.value(), "존재하지 않는 사용자입니다."),

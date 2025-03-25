@@ -12,6 +12,7 @@ import com.example.scheduleProject.domain.user.repository.UserRepository;
 import com.example.scheduleProject.global.exception.ScheduleException;
 import com.example.scheduleProject.global.exception.UserException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 import static com.example.scheduleProject.global.response.status.BaseResponseStatus.NOT_EXIST_SCHEDULE_ERROR;
 import static com.example.scheduleProject.global.response.status.BaseResponseStatus.NOT_EXIST_USER_ERROR;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
