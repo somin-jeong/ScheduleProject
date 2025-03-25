@@ -14,10 +14,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Types;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -113,18 +110,31 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public boolean updateSchedule(Long scheduleId, String content, String title, String authorName, String password) {
-        String sql = "UPDATE schedule SET title = ?, content = ?, author_name = ?" +
-                "WHERE schedule_id = ? AND password = ?";
+        StringBuilder sql = new StringBuilder("UPDATE schedule SET ");
+        List<Object> params = new ArrayList<>();
 
-        PreparedStatementSetter preparedStatementSetter = ps -> {
-            ps.setString(1, title);
-            ps.setString(2, content);
-            ps.setString(3, authorName);
-            ps.setLong(4, scheduleId);
-            ps.setString(5, password);
-        };
+        if (title != null) {
+            sql.append("title = ?, ");
+            params.add(title);
+        }
+        if (content != null) {
+            sql.append("content = ?, ");
+            params.add(content);
+        }
+        if (authorName != null) {
+            sql.append("author_name = ? ");
+            params.add(authorName);
+        }
 
-        int updated = jdbcTemplate.update(sql, preparedStatementSetter);
+        if (params.isEmpty()) {
+            return false;
+        }
+
+        sql.append("WHERE schedule_id = ? AND password = ?");
+        params.add(scheduleId);
+        params.add(password);
+
+        int updated = jdbcTemplate.update(sql.toString(), params.toArray());
         return updated > 0;
     }
 
