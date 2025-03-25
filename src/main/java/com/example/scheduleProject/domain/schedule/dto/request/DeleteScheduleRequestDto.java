@@ -1,7 +1,7 @@
 package com.example.scheduleProject.domain.schedule.dto.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record DeleteScheduleRequestDto(
-        @NotNull String password
+        @NotBlank String password
 ) {}
