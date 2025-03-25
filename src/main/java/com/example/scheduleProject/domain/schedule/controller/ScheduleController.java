@@ -1,12 +1,13 @@
 package com.example.scheduleProject.domain.schedule.controller;
 
 import com.example.scheduleProject.domain.schedule.dto.request.DeleteScheduleRequestDto;
-import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
+import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping("/schedules")
-    private ResponseEntity<SaveScheduleResponseDto> saveSchedule(@RequestBody SaveScheduleRequestDto requestDto) {
+    private ResponseEntity<SaveScheduleResponseDto> saveSchedule(@RequestBody @Valid SaveScheduleRequestDto requestDto) {
         SaveScheduleResponseDto responseDto = scheduleService.saveSchedule(requestDto);
         return new ResponseEntity<>(responseDto, HttpStatusCode.valueOf(200));
     }
@@ -44,7 +45,7 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/schedules/{scheduleId}")
-    private ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId, @RequestBody DeleteScheduleRequestDto requestDto) {
+    private ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId, @RequestBody @Valid DeleteScheduleRequestDto requestDto) {
         scheduleService.deleteSchedule(scheduleId, requestDto);
         return new ResponseEntity<>("삭제 완료", HttpStatusCode.valueOf(200));
     }

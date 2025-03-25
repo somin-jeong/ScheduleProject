@@ -1,11 +1,15 @@
 package com.example.scheduleProject.domain.schedule.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record SaveScheduleRequestDto(
         @NotNull Long userId,
-        @NotNull String title,
-        @NotNull String content,
-        @NotNull String authorName,
-        @NotNull String password
+        @NotBlank String title,
+        @NotBlank
+        @Size(max = 200)
+        String content,
+        @NotBlank String authorName,
+        @NotBlank String password
 ) {}
