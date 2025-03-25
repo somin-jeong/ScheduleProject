@@ -45,7 +45,7 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/schedules/{scheduleId}")
-    private ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId, @RequestBody @Valid DeleteScheduleRequestDto requestDto) {
+    private ResponseEntity<String> deleteSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid DeleteScheduleRequestDto requestDto) {
         scheduleService.deleteSchedule(scheduleId, requestDto);
         return new ResponseEntity<>("삭제 완료", HttpStatusCode.valueOf(200));
     }
