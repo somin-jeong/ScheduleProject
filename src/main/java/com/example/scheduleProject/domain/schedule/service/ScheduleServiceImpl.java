@@ -13,15 +13,10 @@ import com.example.scheduleProject.domain.user.repository.UserRepository;
 import com.example.scheduleProject.global.exception.ScheduleException;
 import com.example.scheduleProject.global.exception.UserException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static com.example.scheduleProject.global.response.status.BaseResponseStatus.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
@@ -60,7 +55,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleResponseDto updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto) {
+    public String updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto) {
         scheduleRepository.findSchedule(scheduleId)
                 .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
         scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())
@@ -68,18 +63,22 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         boolean isUpdated = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.authorName(), requestDto.password());
         if (isUpdated) {
-            return new ScheduleResponseDto(scheduleId, requestDto.title(), requestDto.content(), requestDto.authorName(), requestDto.password());
+            return "수정 완료되었습니다.";
         }
-        return null;
+        return "수정이 완료되지 않았습니다.";
     }
 
     @Override
-    public void deleteSchedule(Long scheduleId, DeleteScheduleRequestDto requestDto) {
+    public String deleteSchedule(Long scheduleId, DeleteScheduleRequestDto requestDto) {
         scheduleRepository.findSchedule(scheduleId)
                 .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
         scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())
                 .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
 
-        scheduleRepository.deleteSchedule(scheduleId, requestDto.password());
+        boolean isDeleted = scheduleRepository.deleteSchedule(scheduleId, requestDto.password());
+        if (isDeleted) {
+            return "삭제 완료되었습니다.";
+        }
+        return "삭제가 완료되지 않았습니다.";
     }
 }

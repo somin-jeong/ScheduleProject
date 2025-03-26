@@ -14,5 +14,5 @@ public interface ScheduleRepository {
     Optional<ScheduleResponseDto> findSchedule(Long scheduleId);
     Optional<ScheduleResponseDto> checkPasswordMatch(Long scheduleId, String password);
     boolean updateSchedule(Long scheduleId, String content, String title, String authorName, String password);
-    void deleteSchedule(Long scheduleId, String password);
+    boolean deleteSchedule(Long scheduleId, String password);
 }

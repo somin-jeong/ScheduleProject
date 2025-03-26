@@ -175,9 +175,10 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public void deleteSchedule(Long scheduleId, String password) {
+    public boolean deleteSchedule(Long scheduleId, String password) {
         String sql = "DELETE FROM schedule WHERE schedule_id = ? AND password = ?";
 
-        jdbcTemplate.update(sql, scheduleId, password);
+        int deleted = jdbcTemplate.update(sql, scheduleId, password);
+        return deleted > 0;
     }
 }

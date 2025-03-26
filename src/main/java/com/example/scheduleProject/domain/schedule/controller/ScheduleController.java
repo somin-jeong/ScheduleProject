@@ -8,14 +8,10 @@ import com.example.scheduleProject.domain.schedule.dto.response.PageResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.service.ScheduleService;
+import com.example.scheduleProject.global.response.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,32 +19,32 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping("/schedules")
-    private ResponseEntity<SaveScheduleResponseDto> saveSchedule(@RequestBody @Valid SaveScheduleRequestDto requestDto) {
+    private BaseResponse<SaveScheduleResponseDto> saveSchedule(@RequestBody @Valid SaveScheduleRequestDto requestDto) {
         SaveScheduleResponseDto responseDto = scheduleService.saveSchedule(requestDto);
-        return new ResponseEntity<>(responseDto, HttpStatusCode.valueOf(200));
+        return new BaseResponse<>(responseDto);
     }
 
     @GetMapping("/schedules")
-    private ResponseEntity<PageResponseDto<ScheduleResponseDto>> findAllSchedules(@ModelAttribute @Valid FindScheduleRequestDto requestDto) {
+    private BaseResponse<PageResponseDto<ScheduleResponseDto>> findAllSchedules(@ModelAttribute @Valid FindScheduleRequestDto requestDto) {
         PageResponseDto<ScheduleResponseDto> schedules = scheduleService.findAllSchedules(requestDto);
-        return new ResponseEntity<>(schedules, HttpStatusCode.valueOf(200));
+        return new BaseResponse<>(schedules);
     }
 
     @GetMapping("/schedules/{scheduleId}")
-    private ResponseEntity<ScheduleResponseDto> findSchedule(@PathVariable @Valid Long scheduleId) {
+    private BaseResponse<ScheduleResponseDto> findSchedule(@PathVariable @Valid Long scheduleId) {
         ScheduleResponseDto schedule = scheduleService.findSchedule(scheduleId);
-        return new ResponseEntity<>(schedule, HttpStatusCode.valueOf(200));
+        return new BaseResponse<>(schedule);
     }
 
     @PutMapping("/schedules/{scheduleId}")
-    private ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid UpdateScheduleRequestDto requestDto) {
-        ScheduleResponseDto schedule = scheduleService.updateSchedule(scheduleId, requestDto);
-        return new ResponseEntity<>(schedule, HttpStatusCode.valueOf(200));
+    private BaseResponse<String> updateSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid UpdateScheduleRequestDto requestDto) {
+        String result = scheduleService.updateSchedule(scheduleId, requestDto);
+        return new BaseResponse<>(result);
     }
 
     @DeleteMapping("/schedules/{scheduleId}")
-    private ResponseEntity<String> deleteSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid DeleteScheduleRequestDto requestDto) {
-        scheduleService.deleteSchedule(scheduleId, requestDto);
-        return new ResponseEntity<>("삭제 완료", HttpStatusCode.valueOf(200));
+    private BaseResponse<String> deleteSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid DeleteScheduleRequestDto requestDto) {
+        String result = scheduleService.deleteSchedule(scheduleId, requestDto);
+        return new BaseResponse<>(result);
     }
 }
