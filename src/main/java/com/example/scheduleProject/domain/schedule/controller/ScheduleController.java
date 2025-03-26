@@ -4,11 +4,13 @@ import com.example.scheduleProject.domain.schedule.dto.request.DeleteScheduleReq
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
+import com.example.scheduleProject.domain.schedule.dto.response.PageResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +29,8 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedules")
-    private ResponseEntity<List<ScheduleResponseDto>> findAllSchedules(@ModelAttribute @Valid FindScheduleRequestDto requestDto) {
-        List<ScheduleResponseDto> schedules = scheduleService.findAllSchedules(requestDto);
+    private ResponseEntity<PageResponseDto<ScheduleResponseDto>> findAllSchedules(@ModelAttribute @Valid FindScheduleRequestDto requestDto) {
+        PageResponseDto<ScheduleResponseDto> schedules = scheduleService.findAllSchedules(requestDto);
         return new ResponseEntity<>(schedules, HttpStatusCode.valueOf(200));
     }
 

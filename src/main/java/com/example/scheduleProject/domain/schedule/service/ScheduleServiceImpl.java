@@ -4,6 +4,7 @@ import com.example.scheduleProject.domain.schedule.dto.request.DeleteScheduleReq
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
+import com.example.scheduleProject.domain.schedule.dto.response.PageResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.entity.Schedule;
@@ -13,6 +14,7 @@ import com.example.scheduleProject.global.exception.ScheduleException;
 import com.example.scheduleProject.global.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,13 +44,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto) {
+    public PageResponseDto<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto) {
         if (requestDto.userId() != null) {
             userRepository.findByUserId(requestDto.userId())
                     .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
         }
 
-        return scheduleRepository.findAllSchedules(requestDto.updatedDate(), requestDto.userId());
+        return scheduleRepository.findAllSchedules(requestDto.updatedDate(), requestDto.userId(), requestDto.page(), requestDto.size());
     }
 
     @Override

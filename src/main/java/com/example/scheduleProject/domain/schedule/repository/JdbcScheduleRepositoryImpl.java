@@ -1,10 +1,10 @@
 package com.example.scheduleProject.domain.schedule.repository;
 
+import com.example.scheduleProject.domain.schedule.dto.response.PageResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.entity.Schedule;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.Types;
 import java.util.*;
 
-@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
@@ -42,12 +41,39 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules(String updatedDate, Long userId) {
+    public PageResponseDto<ScheduleResponseDto> findAllSchedules(String updatedDate, Long userId, int page, int size) {
         String sql = "SELECT schedule_id, title, content, author_name, password " +
                 "FROM schedule " +
                 "WHERE (? IS NULL OR DATE(updated_at) = ?) " +
                 "AND (? IS NULL OR user_id = ?) " +
-                "ORDER BY updated_at DESC";
+                "ORDER BY updated_at DESC " +
+                "LIMIT ? OFFSET ?";
+
+        PreparedStatementSetter preparedStatementSetter = ps -> {
+            ps.setString(1, updatedDate);
+            ps.setString(2, updatedDate);
+            if (userId != null) {
+                ps.setLong(3, userId);
+                ps.setLong(4, userId);
+            } else {
+                ps.setNull(3, Types.BIGINT);
+                ps.setNull(4, Types.BIGINT);
+            }
+            ps.setInt(5, size);
+            ps.setInt(6, page*size);
+        };
+
+        List<ScheduleResponseDto> scheduleResponseDtos = jdbcTemplate.query(sql, preparedStatementSetter, schedulesRowMapper());
+        return new PageResponseDto<>(scheduleResponseDtos, page, size, findScheduleCount(updatedDate, userId));
+    }
+
+    @Override
+    public Integer findScheduleCount(String updatedDate, Long userId) {
+        String sql = "SELECT COUNT(*) " +
+                "FROM schedule " +
+                "WHERE (? IS NULL OR DATE(updated_at) = ?) " +
+                "AND (? IS NULL OR user_id = ?) " +
+                "ORDER BY updated_at DESC ";
 
         PreparedStatementSetter preparedStatementSetter = ps -> {
             ps.setString(1, updatedDate);
@@ -61,7 +87,12 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
             }
         };
 
-        return jdbcTemplate.query(sql, preparedStatementSetter, schedulesRowMapper());
+        return jdbcTemplate.query(sql, preparedStatementSetter, rs -> {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
+        });
     }
 
     private RowMapper<ScheduleResponseDto> schedulesRowMapper() {
