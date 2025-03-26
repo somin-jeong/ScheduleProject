@@ -49,7 +49,13 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
                 "ORDER BY updated_at DESC " +
                 "LIMIT ? OFFSET ?";
 
-        PreparedStatementSetter preparedStatementSetter = ps -> {
+        List<ScheduleResponseDto> scheduleResponseDtos =
+                jdbcTemplate.query(sql, getPreparedStatementSetter(updatedDate, userId, page, size), schedulesRowMapper());
+        return new PageResponseDto<>(scheduleResponseDtos, page, size, findScheduleCount(updatedDate, userId));
+    }
+
+    private static PreparedStatementSetter getPreparedStatementSetter(String updatedDate, Long userId, int page, int size) {
+        return ps -> {
             ps.setString(1, updatedDate);
             ps.setString(2, updatedDate);
             if (userId != null) {
@@ -60,39 +66,8 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
                 ps.setNull(4, Types.BIGINT);
             }
             ps.setInt(5, size);
-            ps.setInt(6, page*size);
+            ps.setInt(6, page * size);
         };
-
-        List<ScheduleResponseDto> scheduleResponseDtos = jdbcTemplate.query(sql, preparedStatementSetter, schedulesRowMapper());
-        return new PageResponseDto<>(scheduleResponseDtos, page, size, findScheduleCount(updatedDate, userId));
-    }
-
-    @Override
-    public Integer findScheduleCount(String updatedDate, Long userId) {
-        String sql = "SELECT COUNT(*) " +
-                "FROM schedule " +
-                "WHERE (? IS NULL OR DATE(updated_at) = ?) " +
-                "AND (? IS NULL OR user_id = ?) " +
-                "ORDER BY updated_at DESC ";
-
-        PreparedStatementSetter preparedStatementSetter = ps -> {
-            ps.setString(1, updatedDate);
-            ps.setString(2, updatedDate);
-            if (userId != null) {
-                ps.setLong(3, userId);
-                ps.setLong(4, userId);
-            } else {
-                ps.setNull(3, Types.BIGINT);
-                ps.setNull(4, Types.BIGINT);
-            }
-        };
-
-        return jdbcTemplate.query(sql, preparedStatementSetter, rs -> {
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-            return 0;
-        });
     }
 
     private RowMapper<ScheduleResponseDto> schedulesRowMapper() {
@@ -106,12 +81,51 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
+    public Integer findScheduleCount(String updatedDate, Long userId) {
+        String sql = "SELECT COUNT(*) " +
+                "FROM schedule " +
+                "WHERE (? IS NULL OR DATE(updated_at) = ?) " +
+                "AND (? IS NULL OR user_id = ?) " +
+                "ORDER BY updated_at DESC ";
+
+        return jdbcTemplate.query(sql, getPreparedStatementSetter(updatedDate, userId), rs -> {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
+        });
+    }
+
+    private static PreparedStatementSetter getPreparedStatementSetter(String updatedDate, Long userId) {
+        return ps -> {
+            ps.setString(1, updatedDate);
+            ps.setString(2, updatedDate);
+            if (userId != null) {
+                ps.setLong(3, userId);
+                ps.setLong(4, userId);
+            } else {
+                ps.setNull(3, Types.BIGINT);
+                ps.setNull(4, Types.BIGINT);
+            }
+        };
+    }
+
+    @Override
     public Optional<ScheduleResponseDto> findSchedule(Long scheduleId) {
         String sql = "SELECT schedule_id, title, content, author_name, password " +
                 "FROM schedule " +
                 "WHERE schedule_id = ?";
 
         return jdbcTemplate.query(sql, getOptionalResultSetExtractor(), scheduleId);
+    }
+
+    @Override
+    public Optional<ScheduleResponseDto> checkPasswordMatch(Long scheduleId, String password) {
+        String sql = "SELECT schedule_id, title, content, author_name, password " +
+                "FROM schedule s " +
+                "WHERE s.schedule_id = ? AND s.password = ?";
+
+        return jdbcTemplate.query(sql, getOptionalResultSetExtractor(), scheduleId, password);
     }
 
     private static ResultSetExtractor<Optional<ScheduleResponseDto>> getOptionalResultSetExtractor() {
@@ -128,15 +142,6 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
                 return Optional.empty();
             }
         };
-    }
-
-    @Override
-    public Optional<ScheduleResponseDto> checkPasswordMatch(Long scheduleId, String password) {
-        String sql = "SELECT * " +
-                "FROM schedule s " +
-                "WHERE s.schedule_id = ? AND s.password = ?";
-
-        return jdbcTemplate.query(sql, getOptionalResultSetExtractor(), scheduleId, password);
     }
 
     @Override
