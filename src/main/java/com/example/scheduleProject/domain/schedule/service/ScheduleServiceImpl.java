@@ -36,7 +36,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .title(requestDto.title())
                 .content(requestDto.content())
                 .password(requestDto.password())
-                .authorName(requestDto.authorName())
                 .userId(requestDto.userId()).build();
 
         Schedule savedSchedule = scheduleRepository.save(schedule);
@@ -57,10 +56,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResponseDto findSchedule(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
+        return scheduleRepository.findScheduleByScheduleId(scheduleId)
                 .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
-
-        return new ScheduleResponseDto(schedule.getScheduleId(), schedule.getTitle(), schedule.getContent(), schedule.getAuthorName(), schedule.getPassword());
     }
 
     @Override

@@ -26,17 +26,13 @@ public class Schedule extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private String authorName;
-
-    @Column(nullable = false)
     private Long userId;
 
     @Builder
-    public Schedule(String title, String content, String password, String authorName, Long userId) {
+    public Schedule(String title, String content, String password, Long userId) {
         this.title = title;
         this.content = content;
         this.password = password;
-        this.authorName = authorName;
         this.userId = userId;
     }
 }

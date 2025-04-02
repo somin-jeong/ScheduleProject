@@ -13,12 +13,21 @@ import java.util.Optional;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>, CustomScheduleRepository {
     @Query("""
     SELECT new com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto
-        (s.scheduleId, s.title, s.content, s.authorName, s.password)
-    FROM Schedule s
+        (s.scheduleId, s.title, s.content, u.name, s.password)
+    FROM Schedule s LEFT JOIN Users u ON s.userId = u.userId
     WHERE (:userId IS NULL OR s.userId = :userId)
         AND (:startOfDay IS NULL OR s.updatedAt BETWEEN :startOfDay AND :endOfDay)
     """)
     Page<ScheduleResponseDto> findSchedules(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay, Pageable pageable);
+
+    @Query("""
+    SELECT new com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto
+        (s.scheduleId, s.title, s.content, u.name, s.password)
+    FROM Schedule s LEFT JOIN Users u ON s.userId = u.userId
+    WHERE s.scheduleId = :scheduleId
+    """)
+    Optional<ScheduleResponseDto> findScheduleByScheduleId(Long scheduleId);
+
     Optional<Schedule> findByScheduleIdAndPassword(Long scheduleId, String password);
     Optional<Integer> deleteByScheduleIdAndPassword(Long scheduleId, String password);
 }
