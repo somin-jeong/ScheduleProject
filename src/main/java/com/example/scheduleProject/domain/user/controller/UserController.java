@@ -17,7 +17,7 @@ public class UserController {
     /**
      * 사용자 생성
      *
-     * @param requestDto (사용자 이름, 이메일)
+     * @param requestDto (사용자 이름, 이메일, 비밀번호)
      * @return 생성된 사용자의 id를 포함한 응답 객체
      */
     @PostMapping("/users")

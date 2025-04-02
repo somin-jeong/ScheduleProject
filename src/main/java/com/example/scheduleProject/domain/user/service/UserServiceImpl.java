@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
         Users user = Users.builder()
                 .name(requestDto.name())
                 .email(requestDto.email())
+                .password(requestDto.password())
                 .build();
 
         Users savedUser = userRepository.save(user);

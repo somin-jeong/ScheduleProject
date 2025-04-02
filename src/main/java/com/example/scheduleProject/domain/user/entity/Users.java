@@ -22,9 +22,13 @@ public class Users extends BaseEntity {
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
     @Builder
-    public Users(String name, String email) {
+    public Users(String name, String email, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 }
