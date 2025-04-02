@@ -4,13 +4,13 @@ import com.example.scheduleProject.domain.schedule.dto.request.DeleteScheduleReq
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
-import com.example.scheduleProject.domain.schedule.dto.response.PageResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.service.ScheduleService;
 import com.example.scheduleProject.global.response.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,8 +37,8 @@ public class ScheduleController {
      * @return 페이징된 일정(일정 ID, 제목, 할일, 작성자명, 비밀번호) 리스트를 포함한 응답 객체
      */
     @GetMapping("/schedules")
-    private BaseResponse<PageResponseDto<ScheduleResponseDto>> findAllSchedules(@ModelAttribute @Valid FindScheduleRequestDto requestDto) {
-        PageResponseDto<ScheduleResponseDto> schedules = scheduleService.findAllSchedules(requestDto);
+    private BaseResponse<Page<ScheduleResponseDto>> findAllSchedules(@ModelAttribute @Valid FindScheduleRequestDto requestDto) {
+        Page<ScheduleResponseDto> schedules = scheduleService.findAllSchedules(requestDto);
         return new BaseResponse<>(schedules);
     }
 
@@ -63,8 +63,8 @@ public class ScheduleController {
      */
     @PutMapping("/schedules/{scheduleId}")
     private BaseResponse<String> updateSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid UpdateScheduleRequestDto requestDto) {
-        String result = scheduleService.updateSchedule(scheduleId, requestDto);
-        return new BaseResponse<>(result);
+        scheduleService.updateSchedule(scheduleId, requestDto);
+        return new BaseResponse<>("수정 완료했습니다.");
     }
 
     /**
@@ -76,7 +76,7 @@ public class ScheduleController {
      */
     @DeleteMapping("/schedules/{scheduleId}")
     private BaseResponse<String> deleteSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid DeleteScheduleRequestDto requestDto) {
-        String result = scheduleService.deleteSchedule(scheduleId, requestDto);
-        return new BaseResponse<>(result);
+        scheduleService.deleteSchedule(scheduleId, requestDto);
+        return new BaseResponse<>("삭제 완료했습니다.");
     }
 }

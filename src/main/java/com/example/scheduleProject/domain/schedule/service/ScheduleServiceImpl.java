@@ -4,7 +4,6 @@ import com.example.scheduleProject.domain.schedule.dto.request.DeleteScheduleReq
 import com.example.scheduleProject.domain.schedule.dto.request.FindScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.SaveScheduleRequestDto;
 import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleRequestDto;
-import com.example.scheduleProject.domain.schedule.dto.response.PageResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.entity.Schedule;
@@ -12,13 +11,18 @@ import com.example.scheduleProject.domain.schedule.repository.ScheduleRepository
 import com.example.scheduleProject.domain.user.repository.UserRepository;
 import com.example.scheduleProject.global.exception.ScheduleException;
 import com.example.scheduleProject.global.exception.UserException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import static com.example.scheduleProject.global.response.status.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
@@ -35,50 +39,55 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .authorName(requestDto.authorName())
                 .userId(requestDto.userId()).build();
 
-        return scheduleRepository.saveSchedule(schedule);
+        Schedule savedSchedule = scheduleRepository.save(schedule);
+        return new SaveScheduleResponseDto(savedSchedule.getScheduleId());
     }
 
     @Override
-    public PageResponseDto<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto) {
+    public Page<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.size());
+
         if (requestDto.userId() != null) {
             userRepository.findByUserId(requestDto.userId())
                     .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
         }
 
-        return scheduleRepository.findAllSchedules(requestDto.updatedDate(), requestDto.userId(), requestDto.page(), requestDto.size());
+        return scheduleRepository.findSchedules(requestDto.userId(), requestDto.getStartOfDay(), requestDto.getEndOfDay(), pageable);
     }
 
     @Override
     public ScheduleResponseDto findSchedule(Long scheduleId) {
-        return scheduleRepository.findSchedule(scheduleId)
+        Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
+
+        return new ScheduleResponseDto(schedule.getScheduleId(), schedule.getTitle(), schedule.getContent(), schedule.getAuthorName(), schedule.getPassword());
     }
 
     @Override
-    public String updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto) {
-        scheduleRepository.findSchedule(scheduleId)
+    public void updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto) {
+        scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
-        scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())
+        scheduleRepository.findByScheduleIdAndPassword(scheduleId, requestDto.password())
                 .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
 
         boolean isUpdated = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.authorName(), requestDto.password());
-        if (isUpdated) {
-            return "수정 완료되었습니다.";
+        if (!isUpdated) {
+            throw new ScheduleException(FAIL_UPDATE_ERROR);
         }
-        return "수정이 완료되지 않았습니다.";
     }
 
     @Override
-    public String deleteSchedule(Long scheduleId, DeleteScheduleRequestDto requestDto) {
-        scheduleRepository.findSchedule(scheduleId)
+    public void deleteSchedule(Long scheduleId, DeleteScheduleRequestDto requestDto) {
+        scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
-        scheduleRepository.checkPasswordMatch(scheduleId, requestDto.password())
+        scheduleRepository.findByScheduleIdAndPassword(scheduleId, requestDto.password())
                 .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
 
-        boolean isDeleted = scheduleRepository.deleteSchedule(scheduleId, requestDto.password());
-        if (isDeleted) {
-            return "삭제 완료되었습니다.";
+        Integer count = scheduleRepository.deleteByScheduleIdAndPassword(scheduleId, requestDto.password())
+                .orElseThrow(() -> new ScheduleException(FAIL_DELETE_ERROR));
+
+        if (count != 1) {
+            throw new ScheduleException(FAIL_DELETE_ERROR);
         }
-        return "삭제가 완료되지 않았습니다.";
     }
 }
