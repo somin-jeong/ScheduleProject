@@ -42,12 +42,14 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public PageResponseDto<ScheduleResponseDto> findAllSchedules(String updatedDate, Long userId, int page, int size) {
-        String sql = "SELECT schedule_id, title, content, author_name, password " +
-                "FROM schedule " +
-                "WHERE (? IS NULL OR DATE(updated_at) = ?) " +
-                "AND (? IS NULL OR user_id = ?) " +
-                "ORDER BY updated_at DESC " +
-                "LIMIT ? OFFSET ?";
+        String sql = """
+                SELECT schedule_id, title, content, author_name, password
+                FROM schedule
+                WHERE (? IS NULL OR DATE(updated_at) = ?)
+                AND (? IS NULL OR user_id = ?)
+                ORDER BY updated_at DESC
+                LIMIT ? OFFSET ?
+                """;
 
         List<ScheduleResponseDto> scheduleResponseDtos =
                 jdbcTemplate.query(sql, getPreparedStatementSetter(updatedDate, userId, page, size), schedulesRowMapper());
@@ -82,11 +84,13 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public Integer findScheduleCount(String updatedDate, Long userId) {
-        String sql = "SELECT COUNT(*) " +
-                "FROM schedule " +
-                "WHERE (? IS NULL OR DATE(updated_at) = ?) " +
-                "AND (? IS NULL OR user_id = ?) " +
-                "ORDER BY updated_at DESC ";
+        String sql = """
+                SELECT COUNT(*)
+                FROM schedule
+                WHERE (? IS NULL OR DATE(updated_at) = ?)
+                AND (? IS NULL OR user_id = ?)
+                ORDER BY updated_at DESC
+                """;
 
         return jdbcTemplate.query(sql, getPreparedStatementSetter(updatedDate, userId), rs -> {
             if (rs.next()) {
@@ -112,18 +116,22 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public Optional<ScheduleResponseDto> findSchedule(Long scheduleId) {
-        String sql = "SELECT schedule_id, title, content, author_name, password " +
-                "FROM schedule " +
-                "WHERE schedule_id = ?";
+        String sql = """
+                SELECT schedule_id, title, content, author_name, password
+                FROM schedule
+                WHERE schedule_id = ?
+                """;
 
         return jdbcTemplate.query(sql, getOptionalResultSetExtractor(), scheduleId);
     }
 
     @Override
     public Optional<ScheduleResponseDto> checkPasswordMatch(Long scheduleId, String password) {
-        String sql = "SELECT schedule_id, title, content, author_name, password " +
-                "FROM schedule s " +
-                "WHERE s.schedule_id = ? AND s.password = ?";
+        String sql = """
+                SELECT schedule_id, title, content, author_name, password
+                FROM schedule s
+                WHERE s.schedule_id = ? AND s.password = ?
+                """;
 
         return jdbcTemplate.query(sql, getOptionalResultSetExtractor(), scheduleId, password);
     }
@@ -176,7 +184,10 @@ public class JdbcScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public boolean deleteSchedule(Long scheduleId, String password) {
-        String sql = "DELETE FROM schedule WHERE schedule_id = ? AND password = ?";
+        String sql = """
+                DELETE FROM schedule
+                WHERE schedule_id = ? AND password = ?
+                """;
 
         int deleted = jdbcTemplate.update(sql, scheduleId, password);
         return deleted > 0;

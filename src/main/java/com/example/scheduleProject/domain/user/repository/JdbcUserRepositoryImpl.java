@@ -16,9 +16,11 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findByUserId(Long userId) {
-        String sql = "SELECT * " +
-                "FROM users " +
-                "WHERE user_id = ?";
+        String sql = """
+                SELECT *
+                FROM users
+                WHERE user_id = ?
+                """;
 
         try {
             User user = jdbcTemplate.queryForObject(sql, getUserRowMapper(), userId);
