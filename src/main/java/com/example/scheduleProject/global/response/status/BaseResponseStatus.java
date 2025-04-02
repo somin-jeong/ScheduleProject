@@ -19,14 +19,16 @@ public enum BaseResponseStatus implements ResponseStatus {
      * 3000: 사용자 정보 오류
      */
     NOT_EXIST_USER_ERROR(3001, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 사용자입니다."),
+    FAIL_USER_UPDATE_ERROR(3002, HttpStatus.BAD_REQUEST.value(), "사용자 정보 수정에 실패했습니다."),
+    FAIL_USER_DELETE_ERROR(3003, HttpStatus.BAD_REQUEST.value(), "사용자 정보 삭제에 실패했습니다."),
 
     /**
      * 4000: 일정 정보 오류
      */
     NOT_EXIST_SCHEDULE_ERROR(4001, HttpStatus.BAD_REQUEST.value(), "일정이 존재하지 않습니다."),
     NOT_PASSWORD_MATCH(4002, HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
-    FAIL_DELETE_ERROR(4003, HttpStatus.BAD_REQUEST.value(), "삭제 실패했습니다."),
-    FAIL_UPDATE_ERROR(4004, HttpStatus.BAD_REQUEST.value(), "수정 실패했습니다.");
+    FAIL_SCHEDULE_DELETE_ERROR(4003, HttpStatus.BAD_REQUEST.value(), "일정 삭제에 실패했습니다."),
+    FAIL_SCHEDULE_UPDATE_ERROR(4004, HttpStatus.BAD_REQUEST.value(), "일정 수정에 실패했습니다.");
 
     private final int code;
     private final int status;

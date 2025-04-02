@@ -72,7 +72,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         boolean isUpdated = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.authorName(), requestDto.password());
         if (!isUpdated) {
-            throw new ScheduleException(FAIL_UPDATE_ERROR);
+            throw new ScheduleException(FAIL_SCHEDULE_UPDATE_ERROR);
         }
     }
 
@@ -84,10 +84,10 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
 
         Integer count = scheduleRepository.deleteByScheduleIdAndPassword(scheduleId, requestDto.password())
-                .orElseThrow(() -> new ScheduleException(FAIL_DELETE_ERROR));
+                .orElseThrow(() -> new ScheduleException(FAIL_SCHEDULE_DELETE_ERROR));
 
         if (count != 1) {
-            throw new ScheduleException(FAIL_DELETE_ERROR);
+            throw new ScheduleException(FAIL_SCHEDULE_DELETE_ERROR);
         }
     }
 }
