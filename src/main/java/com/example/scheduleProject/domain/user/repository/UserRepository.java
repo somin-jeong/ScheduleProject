@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<Users, Long> {
     Optional<Integer> updateUser(Long userId, String name, String email);
 
     Optional<Integer> deleteByUserId(Long userId);
+
+    Optional<Users> findByEmailAndPassword(String email, String password);
 }

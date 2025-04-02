@@ -12,5 +12,5 @@ spring:
         show-sql: true
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     defer-datasource-initialization: true

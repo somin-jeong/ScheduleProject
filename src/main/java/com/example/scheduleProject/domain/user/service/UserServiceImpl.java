@@ -1,11 +1,14 @@
 package com.example.scheduleProject.domain.user.service;
 
+import com.example.scheduleProject.domain.user.dto.request.LoginDto;
 import com.example.scheduleProject.domain.user.dto.request.SaveUserRequestDto;
 import com.example.scheduleProject.domain.user.dto.request.UpdateUserRequestDto;
 import com.example.scheduleProject.domain.user.dto.response.SaveUserResponseDto;
 import com.example.scheduleProject.domain.user.entity.Users;
 import com.example.scheduleProject.domain.user.repository.UserRepository;
 import com.example.scheduleProject.global.exception.UserException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,8 @@ import static com.example.scheduleProject.global.response.status.BaseResponseSta
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
+    public static final String SESSION_NAME = "loginUser";
+
     private final UserRepository userRepository;
 
     @Override
@@ -52,5 +57,14 @@ public class UserServiceImpl implements UserService {
         if (count != 1) {
             throw new UserException(FAIL_USER_DELETE_ERROR);
         }
+    }
+
+    @Override
+    public void login(LoginDto requestDto, HttpServletRequest request) {
+        Users user = userRepository.findByEmailAndPassword(requestDto.email(), requestDto.password())
+                .orElseThrow(() -> new UserException(FAIL_LOGIN_ERROR));
+
+        HttpSession session = request.getSession(true);
+        session.setAttribute(SESSION_NAME, user.getUserId());
     }
 }
