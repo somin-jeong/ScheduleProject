@@ -6,6 +6,7 @@ import com.example.scheduleProject.domain.user.dto.request.UpdateUserRequestDto;
 import com.example.scheduleProject.domain.user.dto.response.SaveUserResponseDto;
 import com.example.scheduleProject.domain.user.entity.Users;
 import com.example.scheduleProject.domain.user.repository.UserRepository;
+import com.example.scheduleProject.global.auth.util.PasswordEncoder;
 import com.example.scheduleProject.global.exception.UserException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -20,15 +21,15 @@ import static com.example.scheduleProject.global.response.status.BaseResponseSta
 @Transactional
 public class UserServiceImpl implements UserService {
     public static final String SESSION_NAME = "loginUser";
-
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public SaveUserResponseDto saveUser(SaveUserRequestDto requestDto) {
         Users user = Users.builder()
                 .name(requestDto.name())
                 .email(requestDto.email())
-                .password(requestDto.password())
+                .password(passwordEncoder.encode(requestDto.password()))
                 .build();
 
         Users savedUser = userRepository.save(user);
@@ -61,8 +62,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void login(LoginDto requestDto, HttpServletRequest request) {
-        Users user = userRepository.findByEmailAndPassword(requestDto.email(), requestDto.password())
-                .orElseThrow(() -> new UserException(FAIL_LOGIN_ERROR));
+        Users user = userRepository.findByEmail(requestDto.email())
+                .orElseThrow(() -> new UserException(NOT_EXIST_EMAIL_ERROR));
+
+        if (!passwordEncoder.matches(requestDto.password(), user.getPassword())) {
+            throw new UserException(NOT_MATCH_PASSWORD_ERROR);
+        }
 
         HttpSession session = request.getSession(true);
         session.setAttribute(SESSION_NAME, user.getUserId());
