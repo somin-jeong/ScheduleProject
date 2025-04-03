@@ -2,7 +2,7 @@
 https://held-gas-bf2.notion.site/API-1c0a43069a5580938d9efa5b21c14664?pvs=4
 
 # ERD
-![img_1.png](img_1.png)
+![img.png](img.png)
 
 # 예외처리
 - @valid와 @NotNull, @NotBlank를 통해 필수 요청 값에 대한 null 검증 
