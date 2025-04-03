@@ -28,15 +28,15 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final UserRepository userRepository;
 
     @Override
-    public SaveScheduleResponseDto saveSchedule(SaveScheduleRequestDto requestDto) {
-        userRepository.findByUserId(requestDto.userId())
+    public SaveScheduleResponseDto saveSchedule(Long userId, SaveScheduleRequestDto requestDto) {
+        userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
 
         Schedule schedule = Schedule.builder()
                 .title(requestDto.title())
                 .content(requestDto.content())
                 .password(requestDto.password())
-                .userId(requestDto.userId()).build();
+                .userId(userId).build();
 
         Schedule savedSchedule = scheduleRepository.save(schedule);
         return new SaveScheduleResponseDto(savedSchedule.getScheduleId());
@@ -46,12 +46,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public Page<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.page(), requestDto.size());
 
-        if (requestDto.userId() != null) {
-            userRepository.findByUserId(requestDto.userId())
-                    .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
-        }
-
-        return scheduleRepository.findSchedules(requestDto.userId(), requestDto.getStartOfDay(), requestDto.getEndOfDay(), pageable);
+        return scheduleRepository.findSchedules(requestDto.authorName(), requestDto.getStartOfDay(), requestDto.getEndOfDay(), pageable);
     }
 
     @Override

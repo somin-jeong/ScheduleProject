@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record SaveScheduleRequestDto(
-        @NotNull Long userId,
         @Size(max = 10)
         @NotBlank String title,
         @NotBlank

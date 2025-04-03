@@ -15,10 +15,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, Custo
     SELECT new com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto
         (s.scheduleId, s.title, s.content, u.name, s.password)
     FROM Schedule s LEFT JOIN Users u ON s.userId = u.userId
-    WHERE (:userId IS NULL OR s.userId = :userId)
+    WHERE (:authorName IS NULL OR u.name LIKE %:authorName%)
         AND (:startOfDay IS NULL OR s.updatedAt BETWEEN :startOfDay AND :endOfDay)
     """)
-    Page<ScheduleResponseDto> findSchedules(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay, Pageable pageable);
+    Page<ScheduleResponseDto> findSchedules(String authorName, LocalDateTime startOfDay, LocalDateTime endOfDay, Pageable pageable);
 
     @Query("""
     SELECT new com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto

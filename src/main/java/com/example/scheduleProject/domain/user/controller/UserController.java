@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
+    public static final String SESSION_NAME = "loginUser";
     private final UserService userService;
 
     /**
@@ -48,8 +49,11 @@ public class UserController {
      * @param requestDto 수정할 이름, 이메일
      * @return 수정 성공 메시지
      */
-    @PutMapping("/users/{userId}")
-    private BaseResponse<String> updateUsername(@PathVariable @Valid Long userId, @RequestBody @Valid UpdateUserRequestDto requestDto) {
+    @PutMapping("/users")
+    private BaseResponse<String> updateUsername(
+            @SessionAttribute(name = SESSION_NAME, required = false) Long userId,
+            @RequestBody @Valid UpdateUserRequestDto requestDto
+    ) {
         userService.updateUser(userId, requestDto);
         return new BaseResponse<>("수정 완료했습니다.");
     }
@@ -60,8 +64,8 @@ public class UserController {
      * @param userId 삭제할 사용자 ID
      * @return 삭제 성공 메시지
      */
-    @DeleteMapping("/users/{userId}")
-    private BaseResponse<String> deleteUser(@PathVariable @Valid Long userId) {
+    @DeleteMapping("/users")
+    private BaseResponse<String> deleteUser(@SessionAttribute(name = SESSION_NAME, required = false) Long userId) {
         userService.deleteUser(userId);
         return new BaseResponse<>("삭제 완료했습니다.");
     }

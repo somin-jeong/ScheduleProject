@@ -16,24 +16,29 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class ScheduleController {
+    public static final String SESSION_NAME = "loginUser";
     private final ScheduleService scheduleService;
 
     /**
      * 일정 생성
      *
-     * @param requestDto (사용자 ID, 제목, 할일, 작성자명, 비밀번호)
+     * @param userId 사용자 id
+     * @param requestDto (제목, 할일, 비밀번호)
      * @return 생성된 일정의 id를 포함한 응답 객체
      */
     @PostMapping("/schedules")
-    private BaseResponse<SaveScheduleResponseDto> saveSchedule(@RequestBody @Valid SaveScheduleRequestDto requestDto) {
-        SaveScheduleResponseDto responseDto = scheduleService.saveSchedule(requestDto);
+    private BaseResponse<SaveScheduleResponseDto> saveSchedule(
+            @SessionAttribute(name = SESSION_NAME, required = false) Long userId,
+            @RequestBody @Valid SaveScheduleRequestDto requestDto
+    ) {
+        SaveScheduleResponseDto responseDto = scheduleService.saveSchedule(userId, requestDto);
         return new BaseResponse<>(responseDto);
     }
 
     /**
      * 필터링 조건에 맞는 일정을 페이징하여 조회
      *
-     * @param requestDto (수정일, 사용자 ID, 페이지, 크기)
+     * @param requestDto (수정일, 작성자명, 페이지, 크기)
      * @return 페이징된 일정(일정 ID, 제목, 할일, 작성자명, 비밀번호) 리스트를 포함한 응답 객체
      */
     @GetMapping("/schedules")
@@ -58,7 +63,7 @@ public class ScheduleController {
      * 특정 일정 ID에 해당하는 일정 수정
      *
      * @param scheduleId 수정할 일정 ID
-     * @param requestDto (title, content, authorName, password)
+     * @param requestDto (title, content, password)
      * @return 수정 성공 메시지
      */
     @PutMapping("/schedules/{scheduleId}")

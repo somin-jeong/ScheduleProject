@@ -9,7 +9,7 @@ import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponse
 import org.springframework.data.domain.Page;
 
 public interface ScheduleService {
-    SaveScheduleResponseDto saveSchedule(SaveScheduleRequestDto requestDto);
+    SaveScheduleResponseDto saveSchedule(Long userId, SaveScheduleRequestDto requestDto);
     Page<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto);
     ScheduleResponseDto findSchedule(Long scheduleId);
     void updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto);
