@@ -67,7 +67,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.findByScheduleIdAndPassword(scheduleId, requestDto.password())
                 .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
 
-        boolean isUpdated = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.authorName(), requestDto.password());
+        boolean isUpdated = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.password());
         if (!isUpdated) {
             throw new ScheduleException(FAIL_SCHEDULE_UPDATE_ERROR);
         }

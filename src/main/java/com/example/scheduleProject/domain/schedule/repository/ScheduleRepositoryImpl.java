@@ -16,7 +16,7 @@ public class ScheduleRepositoryImpl implements CustomScheduleRepository {
     private final EntityManager em;
 
     @Override
-    public boolean updateSchedule(Long scheduleId, String content, String title, String authorName, String password) {
+    public boolean updateSchedule(Long scheduleId, String content, String title, String password) {
         StringBuilder jpql = new StringBuilder("UPDATE Schedule s SET ");
         Map<String, Object> params = new HashMap<>();
         List<String> updates = new ArrayList<>();
@@ -28,10 +28,6 @@ public class ScheduleRepositoryImpl implements CustomScheduleRepository {
         if (content != null) {
             updates.add("s.content = :content");
             params.put("content", content);
-        }
-        if (authorName != null) {
-            updates.add("s.authorName = :authorName");
-            params.put("authorName", authorName);
         }
 
         if (updates.isEmpty()) return false;

@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record UpdateScheduleRequestDto(
+        @Size(max = 10)
         String title,
         @Size(max = 200)
         String content,
-        String authorName,
         @NotBlank String password
 ) {}
