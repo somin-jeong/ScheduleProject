@@ -7,10 +7,11 @@ import com.example.scheduleProject.domain.schedule.dto.request.UpdateScheduleReq
 import com.example.scheduleProject.domain.schedule.dto.response.SaveScheduleResponseDto;
 import com.example.scheduleProject.domain.schedule.dto.response.ScheduleResponseDto;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ScheduleService {
     SaveScheduleResponseDto saveSchedule(Long userId, SaveScheduleRequestDto requestDto);
-    Page<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto);
+    Page<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto, Pageable pageable);
     ScheduleResponseDto findSchedule(Long scheduleId);
     void updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto);
     void deleteSchedule(Long scheduleId, DeleteScheduleRequestDto requestDto);

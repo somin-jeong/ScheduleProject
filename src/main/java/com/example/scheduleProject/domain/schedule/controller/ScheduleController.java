@@ -11,6 +11,8 @@ import com.example.scheduleProject.global.response.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,12 +40,16 @@ public class ScheduleController {
     /**
      * 필터링 조건에 맞는 일정을 페이징하여 조회
      *
-     * @param requestDto (수정일, 작성자명, 페이지, 크기)
-     * @return 페이징된 일정(일정 ID, 제목, 할일, 작성자명, 비밀번호) 리스트를 포함한 응답 객체
+     * @param requestDto (수정일, 작성자명)
+     * @param pageable (페이지, 크기)
+     * @return 페이징된 일정(일정 ID, 제목, 할일, 댓글수, 작성자명, 작성일, 수정일) 리스트를 포함한 응답 객체
      */
     @GetMapping("/schedules")
-    private BaseResponse<Page<ScheduleResponseDto>> findAllSchedules(@ModelAttribute @Valid FindScheduleRequestDto requestDto) {
-        Page<ScheduleResponseDto> schedules = scheduleService.findAllSchedules(requestDto);
+    private BaseResponse<Page<ScheduleResponseDto>> findAllSchedules(
+            @ModelAttribute @Valid FindScheduleRequestDto requestDto,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Page<ScheduleResponseDto> schedules = scheduleService.findAllSchedules(requestDto, pageable);
         return new BaseResponse<>(schedules);
     }
 
@@ -51,7 +57,7 @@ public class ScheduleController {
      * 특정 일정 ID에 해당하는 일정 조회
      *
      * @param scheduleId 조회할 일정 ID
-     * @return 일정(일정 ID, 제목, 할일, 작성자명, 비밀번호) 정보를 포함한 응답 객체
+     * @return 일정(일정 ID, 제목, 할일, 댓글수, 작성자명, 작성일, 수정일) 정보를 포함한 응답 객체
      */
     @GetMapping("/schedules/{scheduleId}")
     private BaseResponse<ScheduleResponseDto> findSchedule(@PathVariable @Valid Long scheduleId) {

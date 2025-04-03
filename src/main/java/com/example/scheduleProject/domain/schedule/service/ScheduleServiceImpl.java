@@ -14,7 +14,6 @@ import com.example.scheduleProject.global.exception.UserException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -43,9 +42,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public Page<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto) {
-        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.size());
-
+    public Page<ScheduleResponseDto> findAllSchedules(FindScheduleRequestDto requestDto, Pageable pageable) {
         return scheduleRepository.findSchedules(requestDto.authorName(), requestDto.getStartOfDay(), requestDto.getEndOfDay(), pageable);
     }
 
@@ -62,8 +59,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.findByScheduleIdAndPassword(scheduleId, requestDto.password())
                 .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
 
-        boolean isUpdated = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.password());
-        if (!isUpdated) {
+        Integer count = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.password())
+                .orElseThrow(() -> new ScheduleException(FAIL_SCHEDULE_UPDATE_ERROR));
+
+        if (count != 1) {
             throw new ScheduleException(FAIL_SCHEDULE_UPDATE_ERROR);
         }
     }
