@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<Users, Long> {
-    Optional<Users> findByUserId(Long userId);
-
     @Modifying
     @Query("""
     UPDATE Users u

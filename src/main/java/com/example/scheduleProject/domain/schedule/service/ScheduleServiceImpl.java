@@ -29,7 +29,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public SaveScheduleResponseDto saveSchedule(Long userId, SaveScheduleRequestDto requestDto) {
-        userRepository.findByUserId(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
 
         Schedule schedule = Schedule.builder()

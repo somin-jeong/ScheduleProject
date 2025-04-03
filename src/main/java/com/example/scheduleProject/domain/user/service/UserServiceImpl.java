@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(Long userId, UpdateUserRequestDto requestDto) {
-        userRepository.findByUserId(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
 
         Integer count = userRepository.updateUser(userId, requestDto.name(), requestDto.email())
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
-        userRepository.findByUserId(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
 
         Integer count = userRepository.deleteByUserId(userId)
