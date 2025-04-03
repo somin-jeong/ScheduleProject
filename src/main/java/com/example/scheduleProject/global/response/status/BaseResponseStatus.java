@@ -30,7 +30,18 @@ public enum BaseResponseStatus implements ResponseStatus {
     NOT_EXIST_SCHEDULE_ERROR(4001, HttpStatus.BAD_REQUEST.value(), "일정이 존재하지 않습니다."),
     NOT_PASSWORD_MATCH(4002, HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
     FAIL_SCHEDULE_DELETE_ERROR(4003, HttpStatus.BAD_REQUEST.value(), "일정 삭제에 실패했습니다."),
-    FAIL_SCHEDULE_UPDATE_ERROR(4004, HttpStatus.BAD_REQUEST.value(), "일정 수정에 실패했습니다.");
+    FAIL_SCHEDULE_UPDATE_ERROR(4004, HttpStatus.BAD_REQUEST.value(), "일정 수정에 실패했습니다."),
+
+    /**
+     * 5000: 댓글 정보 오류
+     */
+    NOT_EXIST_COMMENT_ERROR(5001, HttpStatus.BAD_REQUEST.value(), "댓글이 존재하지 않습니다."),
+    FAIL_COMMENT_UPDATE_ERROR(5002, HttpStatus.BAD_REQUEST.value(), "댓글 수정에 실패했습니다."),
+    FAIL_COMMENT_DELETE_ERROR(5003, HttpStatus.BAD_REQUEST.value(), "댓글 삭제에 실패했습니다."),
+    NOT_ALLOW_UPDATE_COMMENT_ERROR(5004, HttpStatus.BAD_REQUEST.value(), "댓글 작성자만 댓글을 수정할 수 있습니다."),
+    NOT_ALLOW_DELETE_COMMENT_ERROR(5004, HttpStatus.BAD_REQUEST.value(), "댓글 작성자만 댓글을 삭제할 수 있습니다.");
+
+
 
     private final int code;
     private final int status;
