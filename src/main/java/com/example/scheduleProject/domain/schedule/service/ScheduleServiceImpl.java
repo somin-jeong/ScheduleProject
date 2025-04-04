@@ -12,10 +12,13 @@ import com.example.scheduleProject.domain.user.repository.UserRepository;
 import com.example.scheduleProject.global.exception.ScheduleException;
 import com.example.scheduleProject.global.exception.UserException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 import static com.example.scheduleProject.global.response.status.BaseResponseStatus.*;
 
@@ -53,11 +56,17 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public void updateSchedule(Long scheduleId, UpdateScheduleRequestDto requestDto) {
+    public void updateSchedule(Long userId, Long scheduleId, UpdateScheduleRequestDto requestDto) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
         scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
-        scheduleRepository.findByScheduleIdAndPassword(scheduleId, requestDto.password())
+        Schedule schedule = scheduleRepository.findByScheduleIdAndPassword(scheduleId, requestDto.password())
                 .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
+
+        if (!Objects.equals(schedule.getUserId(), userId)) {
+            throw new ScheduleException(NOT_ALLOW_UPDATE_SCHEDULE_ERROR);
+        }
 
         Integer count = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.password())
                 .orElseThrow(() -> new ScheduleException(FAIL_SCHEDULE_UPDATE_ERROR));
@@ -68,11 +77,17 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public void deleteSchedule(Long scheduleId, DeleteScheduleRequestDto requestDto) {
+    public void deleteSchedule(Long userId, Long scheduleId, DeleteScheduleRequestDto requestDto) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
         scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleException(NOT_EXIST_SCHEDULE_ERROR));
-        scheduleRepository.findByScheduleIdAndPassword(scheduleId, requestDto.password())
+        Schedule schedule = scheduleRepository.findByScheduleIdAndPassword(scheduleId, requestDto.password())
                 .orElseThrow(() -> new ScheduleException(NOT_PASSWORD_MATCH));
+
+        if (!Objects.equals(schedule.getUserId(), userId)) {
+            throw new ScheduleException(NOT_ALLOW_DELETE_SCHEDULE_ERROR);
+        }
 
         Integer count = scheduleRepository.deleteByScheduleIdAndPassword(scheduleId, requestDto.password())
                 .orElseThrow(() -> new ScheduleException(FAIL_SCHEDULE_DELETE_ERROR));

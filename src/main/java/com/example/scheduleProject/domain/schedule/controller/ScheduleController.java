@@ -73,8 +73,12 @@ public class ScheduleController {
      * @return 수정 성공 메시지
      */
     @PutMapping("/schedules/{scheduleId}")
-    private BaseResponse<String> updateSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid UpdateScheduleRequestDto requestDto) {
-        scheduleService.updateSchedule(scheduleId, requestDto);
+    private BaseResponse<String> updateSchedule(
+            @SessionAttribute(name = SESSION_NAME, required = false) Long userId,
+            @PathVariable @Valid Long scheduleId,
+            @RequestBody @Valid UpdateScheduleRequestDto requestDto
+    ) {
+        scheduleService.updateSchedule(userId, scheduleId, requestDto);
         return new BaseResponse<>("수정 완료했습니다.");
     }
 
@@ -86,8 +90,12 @@ public class ScheduleController {
      * @return 삭제 성공 메시지
      */
     @DeleteMapping("/schedules/{scheduleId}")
-    private BaseResponse<String> deleteSchedule(@PathVariable @Valid Long scheduleId, @RequestBody @Valid DeleteScheduleRequestDto requestDto) {
-        scheduleService.deleteSchedule(scheduleId, requestDto);
+    private BaseResponse<String> deleteSchedule(
+            @SessionAttribute(name = SESSION_NAME, required = false) Long userId,
+            @PathVariable @Valid Long scheduleId,
+            @RequestBody @Valid DeleteScheduleRequestDto requestDto
+    ) {
+        scheduleService.deleteSchedule(userId, scheduleId, requestDto);
         return new BaseResponse<>("삭제 완료했습니다.");
     }
 }

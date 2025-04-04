@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserException(NOT_EXIST_EMAIL_ERROR));
 
         if (!passwordEncoder.matches(requestDto.password(), user.getPassword())) {
-            throw new UserException(NOT_MATCH_PASSWORD_ERROR);
+            throw new UserException(INVALID_PASSWORD_ERROR);
         }
 
         HttpSession session = request.getSession(true);
