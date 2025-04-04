@@ -38,14 +38,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(Long userId, UpdateUserRequestDto requestDto) {
-        userRepository.findById(userId)
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(NOT_EXIST_USER_ERROR));
 
-        Integer count = userRepository.updateUser(userId, requestDto.name(), requestDto.email())
-                .orElseThrow(() -> new UserException(FAIL_USER_UPDATE_ERROR));
-        if (count != 1) {
-            throw new UserException(FAIL_USER_UPDATE_ERROR);
-        }
+        user.updateUser(requestDto.name(), requestDto.email());
     }
 
     @Override

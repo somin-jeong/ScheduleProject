@@ -12,7 +12,6 @@ import com.example.scheduleProject.domain.user.repository.UserRepository;
 import com.example.scheduleProject.global.exception.ScheduleException;
 import com.example.scheduleProject.global.exception.UserException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,12 +67,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new ScheduleException(NOT_ALLOW_UPDATE_SCHEDULE_ERROR);
         }
 
-        Integer count = scheduleRepository.updateSchedule(scheduleId, requestDto.content(), requestDto.title(), requestDto.password())
-                .orElseThrow(() -> new ScheduleException(FAIL_SCHEDULE_UPDATE_ERROR));
-
-        if (count != 1) {
-            throw new ScheduleException(FAIL_SCHEDULE_UPDATE_ERROR);
-        }
+        schedule.updateSchedule(requestDto.title(), requestDto.content(), requestDto.password());
     }
 
     @Override

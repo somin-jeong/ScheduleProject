@@ -5,7 +5,6 @@ import com.example.scheduleProject.domain.schedule.entity.Schedule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
@@ -37,15 +36,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<ScheduleResponseDto> findScheduleByScheduleId(Long scheduleId);
 
     Optional<Schedule> findByScheduleIdAndPassword(Long scheduleId, String password);
-
-    @Modifying
-    @Query("""
-    UPDATE Schedule s
-    SET s.content = COALESCE(:content, s.content),
-        s.title = COALESCE(:title, s.title)
-    WHERE s.scheduleId = :scheduleId AND s.password = :password
-    """)
-    Optional<Integer> updateSchedule(Long scheduleId, String content, String title, String password);
 
     Optional<Integer> deleteByScheduleIdAndPassword(Long scheduleId, String password);
 }

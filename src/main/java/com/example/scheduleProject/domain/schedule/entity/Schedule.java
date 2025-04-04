@@ -35,4 +35,16 @@ public class Schedule extends BaseEntity {
         this.password = password;
         this.userId = userId;
     }
+
+    public void updateSchedule(String title, String content, String password) {
+        if (title != null) {
+            this.title = title;
+        }
+        if (content != null) {
+            this.content = content;
+        }
+        if (password != null) {
+            this.password = password;
+        }
+    }
 }

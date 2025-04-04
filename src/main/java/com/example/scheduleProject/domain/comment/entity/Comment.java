@@ -31,4 +31,10 @@ public class Comment extends BaseEntity {
         this.userId = userId;
         this.scheduleId = scheduleId;
     }
+
+    public void updateComment(String comment) {
+        if (comment != null) {
+            this.content = comment;
+        }
+    }
 }

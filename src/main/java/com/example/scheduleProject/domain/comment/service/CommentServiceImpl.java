@@ -64,12 +64,7 @@ public class CommentServiceImpl implements CommentService {
             throw new CommentException(NOT_ALLOW_UPDATE_COMMENT_ERROR);
         }
 
-        Integer count = commentRespository.updateComment(requestDto.comment(), commentId)
-                .orElseThrow(() -> new CommentException(FAIL_COMMENT_UPDATE_ERROR));
-
-        if (count != 1) {
-            throw new CommentException(FAIL_COMMENT_UPDATE_ERROR);
-        }
+        comment.updateComment(requestDto.comment());
     }
 
     @Override
